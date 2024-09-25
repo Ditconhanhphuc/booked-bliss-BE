@@ -13,11 +13,106 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User Table
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  username String @unique
-  password String 
-  avatar String?
-  createAt DateTime @default(now())
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  username  String      @unique
+  email     String      @unique
+  avatar    String?
+  createdAt DateTime    @default(now())
+
+  // Relationships
+  posts      Post[]      // A user can create multiple posts
+  savedPosts SavedPost[] // A user can save multiple posts
+  messages   Message[]   // A user can send multiple messages
+  chats      ChatUser[]  // A user can participate in multiple chats through ChatUser
+}
+
+// Post Table
+model Post {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String      @db.ObjectId
+  title     String
+  price     Float
+  images    String[]    // Array of image URLs
+  address   String
+  city      String
+  bedroom   Int
+  bathroom  Int
+  latitude  Float
+  longitude Float
+  type      String      // Property type (e.g., hotel, apartment)
+  property  String?
+  createdAt DateTime    @default(now())
+
+  // Relationships
+  user       User        @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
+  postDetail PostDetail? // One-to-one relationship with PostDetail
+  savedPosts SavedPost[] // One post can be saved by multiple users
+}
+
+// PostDetail Table
+model PostDetail {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  postId    String      @unique @db.ObjectId
+  desc      String
+  utilities String
+  pet       Boolean
+  income    Float?
+  size      Float?
+  school    Boolean
+  bus       Boolean
+  restaurant Boolean
+
+  // Relationships
+  post      Post        @relation(fields: [postId], references: [id]) // One-to-one relationship with Post
+}
+
+// SavedPost Table
+model SavedPost {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String      @db.ObjectId
+  postId    String      @db.ObjectId
+  createdAt DateTime    @default(now())
+
+  // Relationships
+  user      User        @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
+  post      Post        @relation(fields: [postId], references: [id]) // Many-to-one relationship with Post
+}
+
+// Chat Table
+model Chat {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  userIDs    String[]   @db.ObjectId // Array of user IDs
+  seenBy     String[]   @db.ObjectId // Array of user IDs who have seen the last message
+  lastMessage String    @db.ObjectId
+  createdAt  DateTime   @default(now())
+
+  // Relationships
+  messages   Message[]  // One chat can have multiple messages
+  users      ChatUser[] // Many-to-many relationship with User through ChatUser
+}
+
+// Message Table
+model Message {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String      @db.ObjectId
+  chatId    String      @db.ObjectId
+  text      String
+  createdAt DateTime    @default(now())
+
+  // Relationships
+  user      User        @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
+  chat      Chat        @relation(fields: [chatId], references: [id]) // Many-to-one relationship with Chat
+}
+
+// ChatUser Table (join table for Chat and User)
+model ChatUser {
+  id     String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId String    @db.ObjectId
+  chatId String    @db.ObjectId
+
+  // Relationships
+  user   User      @relation(fields: [userId], references: [id])
+  chat   Chat      @relation(fields: [chatId], references: [id])
 }
