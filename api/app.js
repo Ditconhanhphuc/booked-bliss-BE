@@ -27,7 +27,9 @@ app.use("/api/auth", authRoute);
 app.use("/gg", googleAuthRoutes);
 app.use("/fb", facebookAuthRoutes);
 
-
+app.get("/", (req, res) => {
+    res.send("Xin chào");
+});
 
 app.listen(8800, () => {
     console.log("Server is running!");

@@ -1,4 +1,5 @@
 import express from "express";
+import { searchPosts, filterPosts } from "../controllers/post.controller.js";
 
 const router = express.Router()
 
@@ -14,5 +15,9 @@ const router = express.Router()
 // router.delete("/test", (req, res) => {
 //     console.log("router works!")
 // })
+
+router.get("/search", searchPosts);
+router.get("/filter", filterPosts);
+
 
 export default router;
