@@ -41,15 +41,29 @@ model Post {
   bathroom  Int
   latitude  Float
   longitude Float
-  type      String      // Property type (e.g., hotel, apartment)
-  property  String?
+  type      Type      // Property type (e.g., hotel, apartment)
+  property  Property
   createdAt DateTime    @default(now())
 
   // Relationships
+
   user       User        @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
   postDetail PostDetail? // One-to-one relationship with PostDetail
   savedPosts SavedPost[] // One post can be saved by multiple users
 }
+
+enum Type {
+  buy
+  rent
+}
+
+enum Property {
+  apartment
+  house
+  condo
+  land
+}
+
 
 // PostDetail Table
 model PostDetail {

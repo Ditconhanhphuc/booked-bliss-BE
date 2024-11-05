@@ -3,13 +3,13 @@ import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 import session from "express-session";
 import passport from "passport";
-import postRoute from "./routes/post.route.js";
 import authRoute from "./routes/auth.route.js";
 import googleAuthRoutes from './routes/googleAuth.route.js';
 import './controllers/googleAuth.controller.js';
 import facebookAuthRoutes from './routes/facebookAuth.route.js';
 import testRoute from "./routes/test.route.js";
 import userRoute from "./routes/user.route.js";
+import postRoute from "./routes/post.route.js";
 
 dotenv.config();
 

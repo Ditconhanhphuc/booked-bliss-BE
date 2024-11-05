@@ -48,6 +48,9 @@ export const updateUser = async (req, res)=>{
                 ...(avatar && { avatar }),
             },
         });
+
+        const {password:userPassword, ...rest} = updatedUser;
+
         res.status(200).json(updatedUser);
     }catch(err){
         console.log(err);
