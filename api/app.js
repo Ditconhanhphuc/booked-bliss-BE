@@ -3,12 +3,13 @@ import cookieParser from "cookie-parser";
 import dotenv from 'dotenv';
 import session from "express-session";
 import passport from "passport";
-import postRoute from "./routes/post.route.js";
 import authRoute from "./routes/auth.route.js";
 import googleAuthRoutes from './routes/googleAuth.route.js';
-import facebookAuthRoutes from './routes/facebookAuth.route.js';
 import './controllers/googleAuth.controller.js';
-
+import facebookAuthRoutes from './routes/facebookAuth.route.js';
+import testRoute from "./routes/test.route.js";
+import userRoute from "./routes/user.route.js";
+import postRoute from "./routes/post.route.js";
 
 dotenv.config();
 
@@ -22,8 +23,10 @@ app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("/api/posts", postRoute);
 app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
+app.use("/api/posts", postRoute);
+app.use("/api/test", testRoute);
 app.use("/gg", googleAuthRoutes);
 app.use("/fb", facebookAuthRoutes);
 
