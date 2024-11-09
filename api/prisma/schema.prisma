@@ -17,6 +17,7 @@ datasource db {
 model User {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   username  String      @unique
+  password  String
   email     String      @unique
   avatar    String?
   createdAt DateTime    @default(now())
@@ -70,13 +71,13 @@ model PostDetail {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   postId    String      @unique @db.ObjectId
   desc      String
-  utilities String
-  pet       Boolean
-  income    Float?
-  size      Float?
-  school    Boolean
-  bus       Boolean
-  restaurant Boolean
+  utilities String?
+  pet       String?
+  income    String?
+  size      Int?
+  school    Int
+  bus       Int
+  restaurant Int
 
   // Relationships
   post      Post        @relation(fields: [postId], references: [id]) // One-to-one relationship with Post
