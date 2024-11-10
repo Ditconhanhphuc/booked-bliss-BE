@@ -93,6 +93,8 @@ model SavedPost {
   // Relationships
   user      User        @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
   post      Post        @relation(fields: [postId], references: [id]) // Many-to-one relationship with Post
+
+  @@unique([userId, postId])
 }
 
 // Chat Table
