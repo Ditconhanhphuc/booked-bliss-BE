@@ -51,7 +51,7 @@ export const updateUser = async (req, res) => {
 
         const { password: userPassword, ...rest } = updatedUser;
 
-        res.status(200).json(updatedUser);
+        res.status(200).json(rest);
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Failed to update users!" })
@@ -129,7 +129,7 @@ export const profilePosts = async (req, res) => {
         });
 
         const savedPosts = saved.map(item=>item.post)
-        res.status(200).json({userPosts, savedPosts});
+        res.status(200).json({userPosts, savedPosts}) ;
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Failed to get profile posts!" })
