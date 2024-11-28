@@ -56,15 +56,15 @@ model Post {
 }
 
 enum Type {
-  buy
-  rent
+  Buy
+  Rent
 }
 
 enum Property {
-  apartment
-  house
-  condo
-  land
+  Apartment
+  House
+  Condo
+  Land
 }
 
 

@@ -16,4 +16,5 @@ router.post("/save", verifyToken, savePost);
 
 router.get("/profilePosts", verifyToken, profilePosts);
 
+
 export default router;

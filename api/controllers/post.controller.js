@@ -1,92 +1,130 @@
 import prisma from "../lib/prisma.js";
+import jwt from "jsonwebtoken";
 
 export const getPosts = async (req, res) => {
-    try{
-        const posts = await prisma.post.findMany();
-
+    const query = req.query;
+    try {
+        const posts = await prisma.post.findMany({
+            where: {
+                city: query.city || undefined,
+                type: query.type || undefined,
+                property: query.property || undefined,
+                bedroom: parseInt(query.bedroom) || undefined,
+                price: {
+                    gte: parseInt(query.minPrice) || 0,
+                    lte: parseInt(query.maxprice) || 10000000,
+                }
+            }
+        });
+        
+        // setTimeout(() => {
+        //     res.status(200).json(posts);
+        // }, 3000);
         res.status(200).json(posts)
-    }catch(err){
+    } catch (err) {
         console.log(err)
-        res.status(500).json({message:"Failed to get posts"})
+        res.status(500).json({ message: "Failed to get posts" })
     }
 }
 
 export const getPost = async (req, res) => {
     const id = req.params.id;
-    try{
+
+    try {
+        // Tìm bài viết
         const post = await prisma.post.findUnique({
-            where:{id},
+            where: { id },
             include: {
                 postDetail: true,
                 user: {
                     select: {
                         username: true,
-                        avatar: true
-                    }
-                },
-            }
-        });
-
-        let userId;
-
-        const token = req.cookies.token;
-
-        if (!token) {
-            userId = null;
-        } else {
-            jwt.verify(token. process.env.JWT_SECRET_KEY, async(err, payload) => { 
-                if(err) {
-                    userId = null;
-                } else {
-                    userId = payload.id;
-                }
-            });
-        }
-
-        const saved = await prisma.savedPost.findUnique({
-            where: {
-                userId_postId: {
-                    postId: id,
-                    userId,
+                        avatar: true,
+                    },
                 },
             },
         });
-        
-        res.status(200).json({...post, isSaved: saved ? true : false })
-    }catch(err){
-        console.log(err)
-        res.status(500).json({message:"Failed to get post"})
+
+        if (!post) {
+            return res.status(404).json({ message: "Post not found" });
+        }
+
+        let isSaved = false;
+        const token = req.cookies?.token;
+
+        // Xác thực token nếu tồn tại
+        if (token) {
+            try {
+                const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
+
+                // Kiểm tra xem bài viết có được lưu chưa
+                const saved = await prisma.savedPost.findUnique({
+                    where: {
+                        userId_postId: {
+                            postId: id,
+                            userId: payload.id,
+                        },
+                    },
+                });
+                isSaved = saved ? true : false;
+
+                // Nếu muốn xóa bài viết khỏi danh sách đã lưu
+                if (req.method === 'DELETE' && isSaved) {
+                    // Xóa bài viết khỏi danh sách đã lưu của người dùng
+                    await prisma.savedPost.delete({
+                        where: {
+                            userId_postId: {
+                                userId: payload.id,
+                                postId: id,
+                            },
+                        },
+                    });
+                    return res.status(200).json({ message: "Post unsaved successfully" });
+                }
+
+            } catch (err) {
+                console.error("Token verification failed:", err.message);
+                return res.status(401).json({ message: "Invalid token" });
+            }
+        }
+
+        // Gửi phản hồi về bài viết và trạng thái lưu bài
+        res.status(200).json({ ...post, isSaved });
+    } catch (err) {
+        console.error("Error fetching post:", err);
+        res.status(500).json({ message: "Failed to get post" });
     }
-}
+};
+
 
 export const addPost = async (req, res) => {
     const body = req.body;
     const tokenUserId = req.userId;
 
-    try{
+    try {
         const newPost = await prisma.post.create({
-            data:{
-                ...body.postData, 
+            data: {
+                ...body.postData,
                 userId: tokenUserId,
                 postDetail: {
-                    create:body.postDetail,
+                    create: body.postDetail,
                 }
             },
         });
         res.status(200).json(newPost);
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.status(500).json({message:"Failed to create post"});
+        res.status(500).json({ message: "Failed to create post" });
     }
 }
 
 export const updatePost = async (req, res) => {
-    try{
-        
-        res.status(200).json({message})
-    }catch(err){
+    try {
+
+        res.status(200).json({ message })
+    } catch (err) {
         console.log(err)
-        res.status(500).json({message:"Failed to update post"})
+        res.status(500).json({ message: "Failed to update post" })
     }
 }
 
@@ -94,22 +132,22 @@ export const deletePost = async (req, res) => {
     const id = req.params.id;
     const tokenUserId = req.userId
 
-    try{
+    try {
         const post = await prisma.post.findUnique({
-            where:{id}
+            where: { id }
         });
-        
-        if(post.userId !== tokenUserId){
-            return res.status(400).json({message:"Not Authorized!"});
+
+        if (post.userId !== tokenUserId) {
+            return res.status(400).json({ message: "Not Authorized!" });
         }
 
         await prisma.post.delete({
-            where:{id},
+            where: { id },
         });
-        
-        res.status(200).json({message: "Post deleted!"});
-    }catch(err){
+
+        res.status(200).json({ message: "Post deleted!" });
+    } catch (err) {
         console.log(err)
-        res.status(500).json({message:"Failed to delete posts"});
+        res.status(500).json({ message: "Failed to delete posts" });
     }
 }

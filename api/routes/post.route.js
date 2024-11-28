@@ -10,4 +10,7 @@ router.post("/", verifyToken, addPost)
 router.put("/:id", verifyToken, updatePost)
 router.delete("/:id", verifyToken, deletePost)
 
+router.get("/homePosts", getPosts)
+
+
 export default router;
