@@ -95,12 +95,11 @@ export const savePost = async (req, res) => {
         if (savedPost) {
             await prisma.savedPost.delete({
                 where: {
-                    id: savePost.id,
+                    id: savedPost.id,
                 },
             });
-            res.status(200).json({ message: "Post removed form saved list!" });
-        }
-        else {
+            res.status(200).json({ message: "Post removed from saved list" });
+        } else {
             await prisma.savedPost.create({
                 data: {
                     userId: tokenUserId,
@@ -111,7 +110,7 @@ export const savePost = async (req, res) => {
         }
     } catch (err) {
         console.log(err);
-        res.status(500).json({ message: "Failed to delete users!" })
+        res.status(500).json({ message: "Failed to delete users!" });
     }
 };
 
@@ -128,8 +127,8 @@ export const profilePosts = async (req, res) => {
             },
         });
 
-        const savedPosts = saved.map(item=>item.post)
-        res.status(200).json({userPosts, savedPosts}) ;
+        const savedPosts = saved.map(item => item.post)
+        res.status(200).json({ userPosts, savedPosts });
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: "Failed to get profile posts!" })
