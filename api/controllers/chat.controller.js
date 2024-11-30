@@ -1,5 +1,4 @@
-import prisma from "../lib/prisma.js"
-import bcrypt from "bcrypt"
+import prisma from "../lib/prisma.js";
 
 export const getChats = async (req, res) => {
     const tokenUserId = req.userId;
@@ -14,7 +13,7 @@ export const getChats = async (req, res) => {
         });
 
         for (const chat of chats) {
-            const receiverId = chat.userIDs.find(id => id!== tokenUserId);
+            const receiverId = chat.userIDs.find((id) => id !== tokenUserId);
 
             const receiver = await prisma.user.findUnique({
                 where: {
@@ -79,6 +78,7 @@ export const addChat = async (req, res) => {
         const newChat = await prisma.chat.create({
             data: {
                 userIDs: [tokenUserId, req.body.receiverId],
+                // createdAt: new Date(Date.now() + 7 * 60 * 60 * 1000),
             },
         });
 
