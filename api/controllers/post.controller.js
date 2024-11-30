@@ -106,6 +106,7 @@ export const addPost = async (req, res) => {
             data: {
                 ...body.postData,
                 userId: tokenUserId,
+                // createdAt: new Date(Date.now() + 7 * 60 * 60 * 1000),
                 postDetail: {
                     create: body.postDetail,
                 }

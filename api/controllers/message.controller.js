@@ -22,6 +22,7 @@ export const addMessage = async (req, res) => {
                 text,
                 chatId,
                 userId: tokenUserId,
+                // createdAt: new Date(Date.now() + 7 * 60 * 60 * 1000),
             },
         });
 

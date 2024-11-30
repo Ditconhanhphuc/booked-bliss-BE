@@ -18,6 +18,7 @@ export const register = async (req, res) => {
         username,
         email,
         password: hashedPassword,
+        // createdAt: new Date(Date.now() + 7 * 60 * 60 * 1000),
       },
     });
 
