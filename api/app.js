@@ -21,7 +21,7 @@ const app = express();
 // app.use(cors({ origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
 //     credentials: true}))
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: ['http://localhost:3000', 'http://localhost'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'Accept'],
@@ -40,11 +40,11 @@ app.use("/api/posts", postRoute);
 app.use("/api/test", testRoute);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
-app.use("/gg", googleAuthRoutes);
-app.use("/fb", facebookAuthRoutes);
+// app.use("/gg", googleAuthRoutes);
+// app.use("/fb", facebookAuthRoutes);
 
 
 
-app.listen(8800, () => {
+app.listen(8800, '0.0.0.0', () => {
     console.log("Server is running!");
 });
