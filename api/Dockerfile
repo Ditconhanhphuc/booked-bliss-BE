@@ -20,8 +20,5 @@ COPY . .
 # Run Prisma generate to ensure the Prisma client is generated
 RUN npx prisma generate
 
-# Expose the port that your application runs on
-EXPOSE 8800
-
 # Define the command to run the application
-CMD ["npm", "start"]
+CMD ["npm", "run", "prod"]
